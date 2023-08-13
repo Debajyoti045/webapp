@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     let products = document.querySelector('.products');
+    let searchInput = document.getElementById('searchInput');
+    let searchButton = document.getElementById('searchButton');
+    let originalProducts = [];
     async function fetchProducts(url) {
         try {
             let data = await fetch(url);
@@ -36,6 +39,40 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(err);
         }
     }
+    function filterProducts(query, productArray) {
+        return productArray.filter(product =>
+            product.title.toLowerCase().includes(query.toLowerCase())
+        );
+    }
+
+    async function displayFilteredProducts(query) {
+        products.innerHTML = ''; // Clear existing products
+
+        try {
+            let data = await fetch('https://fakestoreapi.com/products');
+            let response = await data.json();
+            
+            let filteredProducts = filterProducts(query, response);
+
+            for (let i = 0; i < filteredProducts.length; i++) {
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    searchButton.addEventListener('click', function() {
+        const searchTerm = searchInput.value;
+        displayFilteredProducts(searchTerm);
+    });
+
+    searchInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const searchTerm = searchInput.value;
+            displayFilteredProducts(searchTerm);
+        }
+    });
+
     fetchProducts('https://fakestoreapi.com/products');
 });
-
